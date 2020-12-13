@@ -1,5 +1,6 @@
 #own additions
 *.mp3
+data/
 
 # Created by https://www.toptal.com/developers/gitignore/api/java,code-java,intellij+all
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,code-java,intellij+all
