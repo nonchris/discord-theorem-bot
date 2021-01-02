@@ -12,6 +12,9 @@ import java.util.Properties;
 public class DiscordBot {
 
     private final String propFileName = "./src/data/config.properties";
+    public static void main(String[] args) {
+        new DiscordBot();
+    }
 
     private JDA jda;
 
