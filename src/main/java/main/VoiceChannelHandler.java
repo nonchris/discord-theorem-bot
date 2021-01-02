@@ -28,3 +28,27 @@ public class VoiceChannelHandler extends ListenerAdapter {
             event.getGuild().getAudioManager().closeAudioConnection();
         }
     }
+
+    private void joinChannel(Guild guild, MessageChannel channel, VoiceChannel connectedChannel) {
+        //returns if bot is already in voice channel
+        if(guild.getSelfMember().getVoiceState().inVoiceChannel()) return;
+        System.out.println("Connected");
+
+        //returns if user is not in voice channel
+        if(connectedChannel == null) {
+            channel.sendMessage("You are not connected to a voice channel!").queue();
+            return;
+        }
+
+        //getting audio manager
+        AudioManager audioManager = guild.getAudioManager();
+
+        //connecting to channel
+        audioManager.openAudioConnection(connectedChannel);
+        System.out.println("Joined Channel: " + connectedChannel.getName());
+
+        //starts audio
+        playerWrapper.play(audioManager);
+    }
+
+}
