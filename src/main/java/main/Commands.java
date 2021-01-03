@@ -1,6 +1,7 @@
 package main;
 
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import main.exceptions.NoVoiceChannelError;
+import main.exceptions.NotInThisVoiceChannelException;
 
 
 public class Commands {
@@ -17,17 +18,16 @@ public class Commands {
             }catch(NoVoiceChannelError e){
                 event.getChannel().sendMessage("You are not in a voice channel").queue();
             }
-        })
-        ;
+        });
 
         //command for leaving a voice channel
-        ch.addCommand("leave", event -> {
-            VoiceChannel selfChannel = event.getGuild().getSelfMember().getVoiceState().getChannel();
-            if(selfChannel == null) return;
-
-            //check if user is in same channel as bot
-            if(selfChannel.equals(event.getMember().getVoiceState().getChannel()))
-                event.getGuild().getAudioManager().closeAudioConnection();
+        ch.addCommand("leave", event -> { try {
+                VoiceChannelHandler.disconnectChannel(event.getMember().getVoiceState().getChannel());
+            } catch (NoVoiceChannelError noVoiceChannelError) {
+                event.getChannel().sendMessage("You're not even in a voice channel").queue();
+            }catch(NotInThisVoiceChannelException e){
+                event.getChannel().sendMessage("I'm not in your voice channel").queue();
+            }
         });
 
         return ch;

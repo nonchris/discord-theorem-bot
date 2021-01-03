@@ -1,11 +1,11 @@
 package main;
 
+import main.exceptions.NoVoiceChannelError;
+import main.exceptions.NotInThisVoiceChannelException;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 public class VoiceChannelHandler {
-
-    private static PlayerWrapper playerWrapper = new PlayerWrapper();
 
     public static void joinChannel(VoiceChannel voiceChannel) throws NoVoiceChannelError {
         //returns if user is not in voice channel
@@ -26,7 +26,18 @@ public class VoiceChannelHandler {
         System.out.println("Joined Channel: " + voiceChannel.getName());
 
         //starts audio
+        PlayerWrapper playerWrapper = new PlayerWrapper();
         playerWrapper.play(audioManager);
+    }
+
+    public static void disconnectChannel(VoiceChannel voiceChannel) throws NoVoiceChannelError, NotInThisVoiceChannelException {
+        if(voiceChannel == null) throw new NoVoiceChannelError();
+
+        VoiceChannel selfChannel = voiceChannel.getGuild().getSelfMember().getVoiceState().getChannel();
+        if(!voiceChannel.equals(selfChannel)) throw new NotInThisVoiceChannelException();
+
+        voiceChannel.getGuild().getAudioManager().closeAudioConnection();
+
     }
 
 }
