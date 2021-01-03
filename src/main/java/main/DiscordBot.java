@@ -50,8 +50,8 @@ public class DiscordBot {
             System.exit(1);
         }
 
-        //adding VoiceChannelHandler for commands
-        jda.addEventListener(new VoiceChannelHandler());
+        //adding handlers for events
+        jda.addEventListener(Commands.init()); //for command events
     }
 
 }
