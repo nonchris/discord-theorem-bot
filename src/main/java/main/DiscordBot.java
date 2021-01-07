@@ -1,5 +1,6 @@
 package main;
 
+import com.sedmelluq.discord.lavaplayer.format.transcoder.AudioChunkDecoder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
@@ -49,6 +50,9 @@ public class DiscordBot {
             e.printStackTrace();
             System.exit(1);
         }
+
+        //initializing Wrapper for playing audio
+        AudioHandlerWrapper.init();
 
         //adding handlers for events
         jda.addEventListener(Commands.init()); //for command events

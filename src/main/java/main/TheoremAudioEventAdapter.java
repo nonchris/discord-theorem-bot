@@ -1,24 +1,39 @@
 package main;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEvent;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
+/**
+ * Handles events on audio players
+ * It queues tracks to play next
+ * Starts and stops playback on AudioPlayer
+ */
 public class TheoremAudioEventAdapter extends AudioEventAdapter {
 
-    private AudioPlayerManager playerManager;;
-    private AudioManager manager;
-    private boolean ende = false;
+    private final Queue<AudioTrack> queue;//to safe queued tracks
+    private final VoiceChannel voiceChannel;//the voice channel the audio player is playing in
+    private final AudioPlayer player;//the audio player this event adapter is linked with
 
-    public TheoremAudioEventAdapter(AudioPlayerManager playerManager){
-        this.playerManager = playerManager;
+    public TheoremAudioEventAdapter(VoiceChannel vc, AudioPlayer player) {
+        queue = new LinkedList<>();
+        voiceChannel = vc;
+        this.player = player;
+    }
+
+    //Function called from outside to queue up tracks
+    public void queue(AudioTrack track) {
+        //if no track is played play the new song else queue it up
+        if(player.getPlayingTrack() == null) player.playTrack(track);
+        else queue.add(track);
     }
 
     @Override
@@ -37,33 +52,15 @@ public class TheoremAudioEventAdapter extends AudioEventAdapter {
     }
 
     @Override
-    //playing end-track when actual track ended
+    //trying to play next track from queue when track ended
+    //deletes audio player that is linked to the voice channel the bot should disconnect
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        if(ende) manager.closeAudioConnection(); // closes connection
-        else{
-            playerManager.loadItem("./src/data/ending.mp3",new AudioLoadResultHandler() {
-                @Override
-                public void trackLoaded(AudioTrack audioTrack) {
-                    player.playTrack(audioTrack);
-                }
-
-                @Override
-                public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                    System.out.println("list loaded");
-                }
-
-                @Override
-                public void noMatches() {
-                    System.out.println("no matches");
-                }
-
-                @Override
-                public void loadFailed(FriendlyException e) {
-                    System.out.println("Load Failed");
-                }
-            });
-            ende = true; //for closing the connection
+        if(queue.isEmpty()){
+            //Exception can be ignored, because we only call that function when we are connected to a voice channel
+            try{ VoiceChannelHandler.disconnectChannel(voiceChannel); }catch (Exception ignored){}
+            AudioHandlerWrapper.deletePlayer(voiceChannel);
         }
+        player.playTrack(queue.poll());
     }
 
     @Override
@@ -85,11 +82,4 @@ public class TheoremAudioEventAdapter extends AudioEventAdapter {
     public void onEvent(AudioEvent event) {
         super.onEvent(event);
     }
-
-    //sets audio manager and resets ende
-    public void setAudioManager(AudioManager manager){
-        this.manager = manager;
-        ende = false;
-    }
-
 }

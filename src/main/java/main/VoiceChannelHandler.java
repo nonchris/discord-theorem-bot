@@ -9,9 +9,7 @@ public class VoiceChannelHandler {
 
     public static void joinChannel(VoiceChannel voiceChannel) throws NoVoiceChannelError {
         //returns if user is not in voice channel
-        if(voiceChannel == null) {
-            throw new NoVoiceChannelError();
-        }
+        if(voiceChannel == null) throw new NoVoiceChannelError();
 
         Guild guild = voiceChannel.getGuild();
 
@@ -24,10 +22,6 @@ public class VoiceChannelHandler {
         //connecting to channel
         audioManager.openAudioConnection(voiceChannel);
         System.out.println("Joined Channel: " + voiceChannel.getName());
-
-        //starts audio
-        PlayerWrapper playerWrapper = new PlayerWrapper();
-        playerWrapper.play(audioManager);
     }
 
     public static void disconnectChannel(VoiceChannel voiceChannel) throws NoVoiceChannelError, NotInThisVoiceChannelException {
