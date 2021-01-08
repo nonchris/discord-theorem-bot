@@ -7,6 +7,8 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import main.exceptions.NoVoiceChannelError;
+import main.exceptions.NotInThisVoiceChannelException;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 
 import java.util.LinkedList;
@@ -19,7 +21,7 @@ import java.util.Queue;
  */
 public class TheoremAudioEventAdapter extends AudioEventAdapter {
 
-    private final Queue<AudioTrack> queue;//to safe queued tracks
+    private Queue<AudioTrack> queue;//to safe queued tracks
     private final VoiceChannel voiceChannel;//the voice channel the audio player is playing in
     private final AudioPlayer player;//the audio player this event adapter is linked with
 
@@ -55,10 +57,17 @@ public class TheoremAudioEventAdapter extends AudioEventAdapter {
     //trying to play next track from queue when track ended
     //deletes audio player that is linked to the voice channel the bot should disconnect
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        if(queue.isEmpty()){
+        //if there is no queue anymore the ending was played and we should disconnect the voice channel
+        if(queue == null){
             //Exception can be ignored, because we only call that function when we are connected to a voice channel
             try{ VoiceChannelHandler.disconnectChannel(voiceChannel); }catch (Exception ignored){}
             AudioHandlerWrapper.deletePlayer(voiceChannel);
+        }
+        //if the queue ist Empty there are no tracks left and the ending should be played
+        //and queue ist set to null this way we can always add more tracks without having the ending in the middle
+        if(queue.isEmpty()){
+            AudioHandlerWrapper.playTrack(voiceChannel,"./src/data/ending.mp3");
+            queue = null;
         }
         player.playTrack(queue.poll());
     }
