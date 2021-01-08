@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Commands {
@@ -80,6 +81,15 @@ public class Commands {
             }catch(NotInThisVoiceChannelException e){
                 event.getChannel().sendMessage("I'm not in your voice channel").queue();
             }
+        });
+
+        //TODO: automate this in CommandHandler?
+        //command for showing all available commands
+        ch.addCommand("help",event -> {
+            MessageChannel channel = event.getChannel();
+            channel.sendMessage("The Following commands are available: \n " +
+                    "join (optional amount of theorems standart = 1) \n" +
+                    "play (amount of theorems) adds specified amount of theorems to you playlist ").queue();
         });
 
         return ch;
