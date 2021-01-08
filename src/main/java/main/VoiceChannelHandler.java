@@ -25,13 +25,16 @@ public class VoiceChannelHandler {
     }
 
     public static void disconnectChannel(VoiceChannel voiceChannel) throws NoVoiceChannelError, NotInThisVoiceChannelException {
+        checkVoiceChannel(voiceChannel);
+
+        voiceChannel.getGuild().getAudioManager().closeAudioConnection();
+    }
+
+    public static void checkVoiceChannel(VoiceChannel voiceChannel) throws NotInThisVoiceChannelException,NoVoiceChannelError{
         if(voiceChannel == null) throw new NoVoiceChannelError();
 
         VoiceChannel selfChannel = voiceChannel.getGuild().getSelfMember().getVoiceState().getChannel();
         if(!voiceChannel.equals(selfChannel)) throw new NotInThisVoiceChannelException();
-
-        voiceChannel.getGuild().getAudioManager().closeAudioConnection();
-
     }
 
 }
