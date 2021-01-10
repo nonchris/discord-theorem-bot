@@ -1,4 +1,4 @@
-package main;
+package main.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -100,6 +100,6 @@ public class AudioHandlerWrapper {
     }
 
     public static void deletePlayer(VoiceChannel channel){
-        players.remove(players.get(channel));
+        players.remove(channel);
     }
 }

@@ -1,10 +1,11 @@
-package main;
+package main.audio;
 
 import main.exceptions.NoVoiceChannelError;
 import main.exceptions.NotInThisVoiceChannelException;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.managers.AudioManager;
 
+@SuppressWarnings("ConstantConditions")
 public class VoiceChannelHandler {
 
     public static void joinChannel(VoiceChannel voiceChannel) throws NoVoiceChannelError {

@@ -1,4 +1,4 @@
-package main;
+package main.audio;
 
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -7,8 +7,6 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import main.exceptions.NoVoiceChannelError;
-import main.exceptions.NotInThisVoiceChannelException;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 
 import java.util.LinkedList;
@@ -69,7 +67,7 @@ public class TheoremAudioEventAdapter extends AudioEventAdapter {
             AudioHandlerWrapper.playTrack(voiceChannel,"./src/data/ending.mp3");
             queue = null;
         }
-        player.playTrack(queue.poll());
+        player.playTrack(queue != null ? queue.poll() : null);
     }
 
     @Override
