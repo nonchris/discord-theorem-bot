@@ -1,5 +1,6 @@
 package main;
 
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -44,6 +45,8 @@ public class CommandHandler extends ListenerAdapter{
     @Override
     //checking for each message if it contains a command
     public void onMessageReceived(MessageReceivedEvent event){
+        if(event.getChannelType() == ChannelType.PRIVATE) return;
+
         checkCommand(event);
     }
 

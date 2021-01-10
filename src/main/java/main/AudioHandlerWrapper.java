@@ -73,7 +73,7 @@ public class AudioHandlerWrapper {
         TheoremAudioEventAdapter eventAdapter = players.get(channel);
         for(String track : tracks){
 
-            playerManager.loadItem(track, new AudioLoadResultHandler() {
+            playerManager.loadItemOrdered(eventAdapter,track, new AudioLoadResultHandler() {
                 @Override
                 public void trackLoaded(AudioTrack audioTrack) {
                     eventAdapter.queue(audioTrack);
