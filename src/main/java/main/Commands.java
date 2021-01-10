@@ -40,8 +40,7 @@ public class Commands {
             }catch(IOException e){
                 System.out.println("could not load file");
             }catch(IllegalArgumentException e){
-                EmbedFactory ef = EmbedFactory.WRONG_PARAMETER();
-                ef.setMessage("The was something wrong with you arguments").dispatch(event.getTextChannel());
+                EmbedFactory.WRONG_PARAMETER().setMessage("The was something wrong with you arguments").dispatch(event.getTextChannel());
             }
         });
 
