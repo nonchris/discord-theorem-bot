@@ -1,5 +1,6 @@
-package main;
+package main.commands;
 
+import main.DiscordBot;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -15,7 +16,7 @@ in the Commands class
  */
 public class CommandHandler extends ListenerAdapter{
 
-    private Map<String, Consumer<MessageReceivedEvent>> commands;
+    private final Map<String, Consumer<MessageReceivedEvent>> commands;
 
     public CommandHandler() {commands = new HashMap<>();}
 

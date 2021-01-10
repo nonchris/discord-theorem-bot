@@ -1,10 +1,11 @@
-package main;
+package main.utils;
 
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 
 import java.io.*;
 
+@SuppressWarnings("unused")
 public class TextToSpeechHandler {
 
     private final SynthesisInput.Builder inputBuilder;

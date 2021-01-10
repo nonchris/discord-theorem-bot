@@ -1,4 +1,4 @@
-package main;
+package main.utils;
 
 import com.google.cloud.texttospeech.v1.SsmlVoiceGender;
 
@@ -17,17 +17,17 @@ import java.util.stream.Collectors;
 public class TheoremHandler {
 
     //path to theorem directory
-    private static final String theoremPath = "./src/data/theoreme";
+    private static final String theoremPath = "./src/data/theorems";
 
     //Function for randomly picking specified amount of theorems
-    public static List<String> generateTheoreme(int amount) throws IOException {
+    public static List<String> generateTheorems(int amount) throws IOException {
         //Gets a List of all available Theorems
         List<Path> paths = Files.list(Paths.get(theoremPath)).collect(Collectors.toList());
         //Filter all mp3 files
         paths = paths.stream().filter(path -> path.toString().contains(".txt")).collect(Collectors.toList());
 
         List<Path> takenPaths = new ArrayList<>();
-        List<String> theoreme = new ArrayList<>();
+        List<String> theorems = new ArrayList<>();
 
         Random rand = new Random();
 
@@ -40,7 +40,7 @@ public class TheoremHandler {
             //if theorem is not already taken put
             //put it in the theorems list and save it as taken
             if(!takenPaths.contains(path)){
-                theoreme.add(path.toString());
+                theorems.add(path.toString());
                 takenPaths.add(path);
                 paths.remove(rand_index);
                 i++;
@@ -53,11 +53,11 @@ public class TheoremHandler {
             }
         }
 
-        theoreme = theoreme.stream().map(path -> path.replace("txt","mp3")).collect(Collectors.toList());
+        theorems = theorems.stream().map(path -> path.replace("txt","mp3")).collect(Collectors.toList());
 
-        checkFiles(theoreme);
+        checkFiles(theorems);
 
-        return theoreme;
+        return theorems;
     }
 
     //function that checks if all chosen theorems have associated audio files
@@ -68,9 +68,9 @@ public class TheoremHandler {
             //if file does not exists create it
             if(!Files.exists(Paths.get(path))){
                 //gets theorem from text file
-                String content = "";
+                String content;
                 try {
-                    content = Files.readAllLines(Paths.get(path.replace("mp3", "txt"))).stream().collect(Collectors.joining());
+                    content = String.join("", Files.readAllLines(Paths.get(path.replace("mp3", "txt"))));
                 } catch(IOException e){
                     //if we can't find the text file just remove the theorem
                     theorems.remove(i);

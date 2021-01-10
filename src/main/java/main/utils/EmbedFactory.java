@@ -1,5 +1,6 @@
-package main;
+package main.utils;
 
+import main.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.exceptions.PermissionException;
@@ -10,6 +11,7 @@ import java.awt.*;
 /**
  * A wrapper of JDAs EmbedBuilder contains some 'default' embed-styles
  */
+@SuppressWarnings("unused")
 public class EmbedFactory {
 
     public static EmbedFactory ERROR(){
@@ -45,7 +47,7 @@ public class EmbedFactory {
         return new EmbedFactory("\u200B", "\u200B", new Color(3, 192, 202));
     }
 
-    private EmbedBuilder eb;
+    private final EmbedBuilder eb;
 
     public EmbedFactory(String title, String message, Color color) {
         eb = new EmbedBuilder();

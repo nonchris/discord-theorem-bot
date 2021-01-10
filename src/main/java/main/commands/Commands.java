@@ -1,16 +1,19 @@
-package main;
+package main.commands;
 
-import com.google.protobuf.Message;
+import main.DiscordBot;
+import main.utils.TheoremHandler;
+import main.audio.AudioHandlerWrapper;
+import main.audio.VoiceChannelHandler;
 import main.exceptions.NoVoiceChannelError;
 import main.exceptions.NotInThisVoiceChannelException;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import main.utils.EmbedFactory;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.io.IOException;
 import java.util.List;
 
-
+@SuppressWarnings("ConstantConditions")
 public class Commands {
 
     //Initializes the CommandHandler with every Command
@@ -38,7 +41,7 @@ public class Commands {
         //handles exception if user isn't in a voice channel
         try  {
             int theoremAmount = TheoremHandler.getTheoremAmount(event.getMessage().getContentRaw());
-            List<String> theoremList = TheoremHandler.generateTheoreme(theoremAmount);
+            List<String> theoremList = TheoremHandler.generateTheorems(theoremAmount);
             theoremList.add(0,"./src/data/greeting.mp3");
             String[] theoremArr = theoremList.toArray(new String[0]);
 
@@ -70,7 +73,7 @@ public class Commands {
             VoiceChannelHandler.checkVoiceChannel(voiceChannel);
 
             //Gets Paths to theorems and plays them
-            List<String> theoremList = TheoremHandler.generateTheoreme(theoremAmount);
+            List<String> theoremList = TheoremHandler.generateTheorems(theoremAmount);
             String[] theoremArr = theoremList.toArray(new String[0]);
             AudioHandlerWrapper.playTrack(voiceChannel,theoremArr);
 
@@ -87,14 +90,14 @@ public class Commands {
             return;
         }
 
-        event.getChannel().sendMessage("Added " + theoremAmount + "theoreme to the playlist").queue();
+        event.getChannel().sendMessage("Added " + theoremAmount + "theorems to the playlist").queue();
     }
 
     //functionality for leave command
     public static void leave(MessageReceivedEvent event) {
         try {
             VoiceChannelHandler.disconnectChannel(event.getMember().getVoiceState().getChannel());
-        } catch (NoVoiceChannelError noVoiceChannelError) {
+        }catch (NoVoiceChannelError noVoiceChannelError) {
             event.getChannel().sendMessage("You're not even in a voice channel").queue();
         }catch(NotInThisVoiceChannelException e){
             event.getChannel().sendMessage("I'm not in your voice channel").queue();
@@ -105,7 +108,7 @@ public class Commands {
     public static void help(MessageReceivedEvent event){
         EmbedFactory.MESSAGE().setTitle("Command list")
                 .setMessage("The following commands are available using `"+ DiscordBot.prefix +"` as prefix: \n\n " +
-                "`join` [optional amount of theorems standart = 1] \n\n" +
+                "`join` [optional amount of theorems standard = 1] \n\n" +
                 "`play` [amount of theorems] adds specified amount of theorems to you playlist\n\n " +
                 "This bot is open source: https://github.com/nonchris/discord-theorem-bot")
                 .setFooter("Please report any issues on GitHub - This bot runs: " + DiscordBot.config.get("VERSION"))

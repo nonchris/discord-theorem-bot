@@ -1,14 +1,13 @@
 package main;
 
-import com.sedmelluq.discord.lavaplayer.format.transcoder.AudioChunkDecoder;
+import main.audio.AudioHandlerWrapper;
+import main.commands.Commands;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.managers.Presence;
 
 import javax.security.auth.login.LoginException;
-import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,7 +56,7 @@ public class DiscordBot {
 
         //setting presence
         jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
-        jda.getPresence().setActivity(Activity.playing("Theoreme | " + prefix + "help"));
+        jda.getPresence().setActivity(Activity.playing("Theorems | " + prefix + "help"));
 
         //initializing Wrapper for playing audio
         AudioHandlerWrapper.init();
