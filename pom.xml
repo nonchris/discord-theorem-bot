@@ -79,7 +79,7 @@
                     <archive>
                         <manifest>
                             <!-- give full qualified name of your main class-->
-                            <mainClass>main.Main</mainClass>
+                            <mainClass>main.DiscordBot</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
