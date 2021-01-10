@@ -4,11 +4,9 @@ import main.exceptions.NoVoiceChannelError;
 import main.exceptions.NotInThisVoiceChannelException;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class Commands {
@@ -16,6 +14,11 @@ public class Commands {
     //Initializes the CommandHandler with every Command
     public static CommandHandler init(){
         CommandHandler ch = new CommandHandler();
+
+        ch.addCommand("error", event -> {
+            EmbedFactory eb = EmbedFactory.WRONG_PARAMETER();
+            eb.dispatch(event.getTextChannel());
+        });
 
         //command to make the bot join a channel
         ch.addCommand("join", event -> {
@@ -33,11 +36,12 @@ public class Commands {
                 AudioHandlerWrapper.playTrack(channel,theoremArr);
 
             }catch(NoVoiceChannelError e){
-                event.getChannel().sendMessage("You are not in a voice channel").queue();
+                EmbedFactory.PERMISSION_USER().setMessage("You are not in a voice channel").dispatch(event.getTextChannel());
             }catch(IOException e){
                 System.out.println("could not load file");
             }catch(IllegalArgumentException e){
-                event.getChannel().sendMessage("The was something wrong with you arguments").queue();
+                EmbedFactory ef = EmbedFactory.WRONG_PARAMETER();
+                ef.setMessage("The was something wrong with you arguments").dispatch(event.getTextChannel());
             }
         });
 
@@ -66,7 +70,7 @@ public class Commands {
                 event.getChannel().sendMessage("Im not in your voice channel").queue();
                 return;
             }catch(IllegalArgumentException e){
-                event.getChannel().sendMessage("The was something wrong with you arguments").queue();
+                EmbedFactory.WRONG_PARAMETER().dispatch(event.getTextChannel());
                 return;
             }
 
@@ -91,6 +95,8 @@ public class Commands {
                     "join (optional amount of theorems standart = 1) \n" +
                     "play (amount of theorems) adds specified amount of theorems to you playlist ").queue();
         });
+
+        ch.addCommand("test", event -> EmbedFactory.PERMISSION_USER().dispatch(event.getTextChannel()));
 
         return ch;
     }
