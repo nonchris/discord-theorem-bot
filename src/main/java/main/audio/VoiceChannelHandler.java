@@ -25,6 +25,10 @@ public class VoiceChannelHandler {
         System.out.println("Joined Channel: " + voiceChannel.getName());
     }
 
+    public static boolean alreadyInVoice(Guild guild){
+        return guild.getSelfMember().getVoiceState().getChannel() != null;
+    }
+
     public static void disconnectChannel(VoiceChannel voiceChannel) throws NoVoiceChannelError, NotInThisVoiceChannelException {
         checkVoiceChannel(voiceChannel);
 

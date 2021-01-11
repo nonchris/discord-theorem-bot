@@ -99,6 +99,8 @@ public class AudioHandlerWrapper {
         }
     }
 
+    public static boolean isStillRegistered(VoiceChannel channel){ return players.containsKey(channel); }
+
     public static void deletePlayer(VoiceChannel channel){
         players.remove(channel);
     }
