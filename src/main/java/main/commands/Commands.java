@@ -10,8 +10,12 @@ import main.utils.EmbedFactory;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import java.awt.*;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("ConstantConditions")
 public class Commands {
@@ -33,6 +37,12 @@ public class Commands {
         //command for showing all available commands
         ch.addCommand("help", Commands::help);
 
+        //command for adding theorems through the bot
+        ch.addCommand("add-entry", Commands::addEntry);
+
+        //hydro command
+        ch.addCommand("hydro", Commands::hydro);
+
         return ch;
     }
 
@@ -42,7 +52,6 @@ public class Commands {
         try  {
             int theoremAmount = TheoremHandler.getTheoremAmount(event.getMessage().getContentRaw());
             List<String> theoremList = TheoremHandler.generateTheorems(theoremAmount);
-            theoremList.add(0,"./src/data/greeting.mp3");
             String[] theoremArr = theoremList.toArray(new String[0]);
 
             VoiceChannel channel = event.getMember().getVoiceState().getChannel();
@@ -50,6 +59,8 @@ public class Commands {
 
             AudioHandlerWrapper.addVoiceChannel(channel);
             AudioHandlerWrapper.playTrack(channel,theoremArr);
+
+            AudioHandlerWrapper.printMap();
 
         }catch(NoVoiceChannelError e){
             EmbedFactory.PERMISSION_USER().setMessage("You are not in a voice channel").dispatch(event.getTextChannel());
@@ -75,7 +86,7 @@ public class Commands {
             //Gets Paths to theorems and plays them
             List<String> theoremList = TheoremHandler.generateTheorems(theoremAmount);
             String[] theoremArr = theoremList.toArray(new String[0]);
-            AudioHandlerWrapper.playTrack(voiceChannel,theoremArr);
+            AudioHandlerWrapper.playTrack(voiceChannel, theoremArr);
 
         } catch (IOException e) {
             return;
@@ -112,6 +123,55 @@ public class Commands {
                 "`play` [amount of theorems] adds specified amount of theorems to you playlist\n\n " +
                 "This bot is open source: https://github.com/nonchris/discord-theorem-bot")
                 .setFooter("Please report any issues on GitHub - This bot runs: " + DiscordBot.config.get("VERSION"))
+                .dispatch(event.getTextChannel());
+    }
+
+    //functionality for add-entry command
+    public static void addEntry(MessageReceivedEvent event){
+        //getting id and checks if member is authorized to do that
+        long AdrianID = Long.parseLong((String)DiscordBot.config.get("ADRIAN_ID"));
+        long ChrisID = Long.parseLong((String)DiscordBot.config.get("CHRIS_ID"));
+        long memberID = event.getMember().getIdLong();
+
+        //if an other member except bot owners tries to add a theorem - sending error
+        if(memberID != AdrianID && memberID != ChrisID){
+            EmbedFactory.PERMISSION_USER().dispatch(event.getTextChannel());
+            return;
+        }
+
+        //splitting the message into its tokens
+        String[] tokens = event.getMessage().getContentRaw().split(" ");
+
+        try {
+            //get the filename for theorem
+            String fileName = tokens[1];
+
+            //if the given message does not have enough parameters end the function
+            if(tokens.length <= 2){
+                EmbedFactory.WRONG_PARAMETER().setMessage("You did not give the right amount of parameters").dispatch(event.getTextChannel());
+                return;
+            }
+
+            //get the text of the theorem
+            String theoremText = Arrays.stream(tokens).skip(2).collect(Collectors.joining(" "));
+
+            //add the theorem
+            TheoremHandler.addTheorem(fileName, theoremText);
+
+        } catch (FileAlreadyExistsException e) {
+            EmbedFactory.WRONG_PARAMETER().setMessage("This Theorem File already exists").dispatch(event.getTextChannel());
+            return;
+        }
+
+        //inform the user of success
+        EmbedFactory.SUCCESS().setMessage("The Theorem was successfully added").dispatch(event.getTextChannel());
+    }
+
+    //functionality for hydro command
+    public static void hydro(MessageReceivedEvent event) {
+        EmbedFactory.MESSAGE().setTitle("HYDROO")
+                .setMessage("Stay Hydrated!")
+                .setColor(new Color(27, 0, 255, 255))
                 .dispatch(event.getTextChannel());
     }
 }
