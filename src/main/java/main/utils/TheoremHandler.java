@@ -3,6 +3,7 @@ package main.utils;
 import com.google.cloud.texttospeech.v1.SsmlVoiceGender;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,12 +20,12 @@ public class TheoremHandler {
     //path to theorem directory
     private static final String theoremPath = "./src/data/theorems";
 
-    //Function for randomly picking specified amount of theorems
-    public static List<String> generateTheorems(int amount) throws IOException {
-        //Gets a List of all available Theorems
-        List<Path> paths = Files.list(Paths.get(theoremPath)).collect(Collectors.toList());
-        //Filter all mp3 files
-        paths = paths.stream().filter(path -> path.toString().contains(".txt")).collect(Collectors.toList());
+    //function for randomly picking specified amount of theorems
+        public static List<String> generateTheorems(int amount) throws IOException {
+            //gets a List of all available Theorems
+            List<Path> paths = Files.list(Paths.get(theoremPath)).collect(Collectors.toList());
+            //filter all mp3 files
+            paths = paths.stream().filter(path -> path.toString().contains(".txt")).collect(Collectors.toList());
 
         List<Path> takenPaths = new ArrayList<>();
         List<String> theorems = new ArrayList<>();
@@ -33,7 +34,7 @@ public class TheoremHandler {
 
         int i = 0;
         while(i < amount){
-            //Picks a random path
+            //picks a random path
             int rand_index = rand.nextInt(paths.size());
             Path path = paths.get(rand_index);
 
@@ -77,7 +78,7 @@ public class TheoremHandler {
                     continue;
                 }
 
-                //Creates new Text to speech handler
+                //creates new Text to speech handler
                 TextToSpeechHandler textToSpeech = new TextToSpeechHandler();
 
                 //set the text that should be converted to TTS
@@ -94,15 +95,14 @@ public class TheoremHandler {
                 try{
                     textToSpeech.generateMP3(path);
                 }catch(IOException e){
+                    System.out.println("Something went wrong when creating mp3 file: " + path);
                     theorems.remove(i);
                 }
-
-
             }
         }
     }
 
-    //Function for getting the amount of theorems that should be played
+    //function for getting the amount of theorems that should be played
     public static int getTheoremAmount(String message){
         String[] words = message.split(" ");
         int number;
@@ -116,5 +116,18 @@ public class TheoremHandler {
         }
 
         return number;
+    }
+
+    //function for adding a theorem text file
+    public static void addTheorem(String fileName, String message) throws FileAlreadyExistsException {
+        String filePath = theoremPath + "/" + fileName + ".txt";
+
+        if(Files.exists(Paths.get(filePath))) throw new FileAlreadyExistsException(fileName);
+
+        try {
+            Files.write(Paths.get(filePath), message.getBytes());
+        } catch (IOException e) {
+            System.out.println("Something went wrong writing to theorem file");
+        }
     }
 }
