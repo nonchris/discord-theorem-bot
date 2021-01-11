@@ -60,8 +60,6 @@ public class Commands {
             AudioHandlerWrapper.addVoiceChannel(channel);
             AudioHandlerWrapper.playTrack(channel,theoremArr);
 
-            AudioHandlerWrapper.printMap();
-
         }catch(NoVoiceChannelError e){
             EmbedFactory.PERMISSION_USER().setMessage("You are not in a voice channel").dispatch(event.getTextChannel());
         }catch(IOException e){
