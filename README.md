@@ -2,7 +2,7 @@
 A collaboration with @thisryan for a Discord.jar bot contest hosted by our university.  
 ## Function
 This bot will join your voice channel, read some predefined random text and leave again.  
-The original idea was to make the bot read some theorems from our math-skript. Thats why things are called e.g. `TheoremeHandler.  
+The original idea was to make the bot read some theorems from our math-skript. Thats why things are called e.g. `TheoremeHandler`.  
 But the Bot is capable of reading all kind of texts.  
 
 ### How it works
@@ -20,8 +20,8 @@ DISCORD_API_KEY=
 PREFIX=
 VERSION=V1.0.0
 JOIN_CHANCE=000
-CHRIS_ID =
-ADRIAN_ID =
+ADRIAN_ID=
+CHRIS_ID=
 ```
 - `JOINCHANCE`: the chance of a random join in percent
 - `ADRIAN_ID` / `CHRIS_ID` are fields to fill in the owners discord-ids to enable registration of texts via discord.  
